@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<!-- Copyright © Klevu Oy. All rights reserved. See LICENSE.txt for license details. -->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <klevu>
+            <indexing_products_exclude_by_visibility>
+                <sync_visibilities>2,3,4</sync_visibilities>
+            </indexing_products_exclude_by_visibility>
+        </klevu>
+    </default>
+</config>

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<!-- Copyright © Klevu Oy. All rights reserved. See LICENSE.txt for license details. -->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <type name="Klevu\IndexingProductsExcludeByVisibility\Service\Determiner\ProductVisibilityIsIndexableDeterminer">
+        <arguments>
+            <argument name="logger" xsi:type="object">Klevu\Indexing\Logger\Logger</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="Klevu\IndexingProducts\Service\Determiner\IsIndexableDeterminer">
+        <arguments>
+            <argument name="isIndexableDeterminers" xsi:type="array">
+                <item name="productVisibilityIsIndexableDeterminer"
+                      xsi:type="object">Klevu\IndexingProductsExcludeByVisibility\Service\Determiner\ProductVisibilityIsIndexableDeterminer</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Klevu\IndexingProductsExcludeByVisibility\Observer\Admin\System\Config\UpdateProductSyncSettingsObserver">
+        <arguments>
+            <argument name="createCronScheduleAction"
+                      xsi:type="object">Klevu\Indexing\Service\Action\Cron\CreateCronScheduleForEntityDiscoveryAction</argument>
+        </arguments>
+    </type>
+</config>

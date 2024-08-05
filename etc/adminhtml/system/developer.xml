@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<!-- Copyright © Klevu Oy. All rights reserved. See LICENSE.txt for license details. -->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
+    <group id="product">
+        <field id="sync_visibilities"
+               translate="label comment tooltip"
+               sortOrder="1000"
+               type="multiselect"
+               showInDefault="1"
+               showInWebsite="1"
+               showInStore="1"
+               canRestore="1">
+            <label>Sync Visibilities</label>
+            <source_model>Magento\Catalog\Model\Product\Visibility</source_model>
+            <can_be_empty>0</can_be_empty>
+            <comment><![CDATA[Klevu will not sync products whose visibility is not in the above selection]]></comment>
+            <tooltip><![CDATA[Note: this is not a core Klevu feature and has been added using the Exclude By Visibility add-on module]]></tooltip>
+            <config_path>klevu/indexing_products_exclude_by_visibility/sync_visibilities</config_path>
+        </field>
+    </group>
+</config>

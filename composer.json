@@ -1,0 +1,38 @@
+{
+    "name": "klevu/module-m2-indexing-products-exclude-by-visibility",
+    "description": "Add-on module to klevu/module-m2-indexing-products to exclude product indexing based on global visibility",
+    "type": "magento2-module",
+    "version": "0.1.0",
+    "require": {
+        "php": "~8.1.0|~8.2.0|~8.3.0",
+        "klevu/module-m2-indexing": ">=0.3.0",
+        "klevu/module-m2-indexing-api": ">=0.3.0",
+        "klevu/module-m2-indexing-products": ">=0.3.0",
+        "magento/framework": "@stable",
+        "magento/module-catalog": "@stable",
+        "magento/module-cms": "@stable",
+        "magento/module-store": "@stable",
+        "psr/log": "@stable"
+    },
+    "require-dev": {
+        "klevu/module-m2-test-fixtures": "0.3.0"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Klevu\\IndexingProductsExcludeByVisibility\\": ""
+        }
+    },
+    "license": [
+        "MIT"
+    ],
+    "authors": [
+        {
+            "name": "Klevu Oy",
+            "email": "niraj.aswani@klevu.com",
+            "homepage": "https://www.klevu.com/"
+        }
+    ]
+}
