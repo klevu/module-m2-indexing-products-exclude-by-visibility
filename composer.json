@@ -5,9 +5,9 @@
     "version": "0.1.0",
     "require": {
         "php": "~8.1.0|~8.2.0|~8.3.0",
-        "klevu/module-m2-indexing": ">=0.3.0",
-        "klevu/module-m2-indexing-api": ">=0.3.0",
-        "klevu/module-m2-indexing-products": ">=0.3.0",
+        "klevu/module-m2-indexing": ">=0.4.0",
+        "klevu/module-m2-indexing-api": ">=0.4.0",
+        "klevu/module-m2-indexing-products": ">=0.4.0",
         "magento/framework": "@stable",
         "magento/module-catalog": "@stable",
         "magento/module-cms": "@stable",
@@ -15,7 +15,7 @@
         "psr/log": "@stable"
     },
     "require-dev": {
-        "klevu/module-m2-test-fixtures": "0.3.0"
+        "klevu/module-m2-test-fixtures": "0.4.0"
     },
     "autoload": {
         "files": [
