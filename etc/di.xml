@@ -26,4 +26,21 @@
                       xsi:type="object">Klevu\Indexing\Service\Action\Cron\CreateCronScheduleForEntityDiscoveryAction</argument>
         </arguments>
     </type>
+
+    <virtualType name="Klevu\IndexingProductsExcludeByVisibility\Service\Modifier\Catalog\Product\Collection\AddParentVisibilityAttributeToCollectionModifier"
+                 type="Klevu\IndexingProducts\Service\Modifier\Catalog\Product\Collection\AddParentAttributeToCollectionModifier">
+        <arguments>
+            <!-- For configurable variants collection replace the visibility of child product with parent product -->
+            <argument name="attributeCode" xsi:type="const">Magento\Catalog\Api\Data\ProductInterface::VISIBILITY</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Klevu\IndexingProducts\Service\Provider\Catalog\Product\Collection\AddParentAttributeToCollectionModifierProvider">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="add_parent_visibility"
+                      xsi:type="object">Klevu\IndexingProductsExcludeByVisibility\Service\Modifier\Catalog\Product\Collection\AddParentVisibilityAttributeToCollectionModifier</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
