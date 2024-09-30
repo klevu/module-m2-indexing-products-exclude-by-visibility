@@ -8,15 +8,13 @@ declare(strict_types=1);
 
 namespace Klevu\IndexingProductsExcludeByVisibility\Service\Determiner;
 
+use Klevu\Configuration\Service\Provider\ScopeProviderInterface;
 use Klevu\IndexingApi\Service\Determiner\IsIndexableDeterminerInterface;
-use Klevu\IndexingProducts\Service\Provider\ProductEntityProvider;
 use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product\Visibility;
 use Magento\Cms\Api\Data\PageInterface;
 use Magento\Framework\Api\ExtensibleDataInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\ScopeInterface;
 use Psr\Log\LoggerInterface;
@@ -34,23 +32,23 @@ class ProductVisibilityIsIndexableDeterminer implements IsIndexableDeterminerInt
      */
     private readonly ScopeConfigInterface $scopeConfig;
     /**
-     * @var ProductRepositoryInterface
+     * @var ScopeProviderInterface
      */
-    private readonly ProductRepositoryInterface $productRepository;
+    private readonly ScopeProviderInterface $scopeProvider;
 
     /**
      * @param LoggerInterface $logger
      * @param ScopeConfigInterface $scopeConfig
-     * @param ProductRepositoryInterface $productRepository
+     * @param ScopeProviderInterface $scopeProvider
      */
     public function __construct(
         LoggerInterface $logger,
         ScopeConfigInterface $scopeConfig,
-        ProductRepositoryInterface $productRepository,
+        ScopeProviderInterface $scopeProvider,
     ) {
         $this->logger = $logger;
         $this->scopeConfig = $scopeConfig;
-        $this->productRepository = $productRepository;
+        $this->scopeProvider = $scopeProvider;
     }
 
     /**
@@ -61,68 +59,62 @@ class ProductVisibilityIsIndexableDeterminer implements IsIndexableDeterminerInt
      * @return bool
      */
     public function execute(
-        ExtensibleDataInterface|PageInterface $entity,
+        ExtensibleDataInterface | PageInterface $entity,
         StoreInterface $store,
-        string $entitySubtype = '',
+        string $entitySubtype = '', // phpcs:ignore SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
     ): bool {
         if (!($entity instanceof ProductInterface)) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'Invalid argument provided for "$entity". '
-                        . 'Expected %s implementing "getData", "getDataUsingMethod", received %s.',
+                    . 'Expected %s implementing "getData", "getDataUsingMethod", received %s.',
                     ProductInterface::class,
                     $entity::class,
                 ),
             );
         }
 
-        $storeId = (int)$store->getId();
-        switch ($entitySubtype) {
-            case ProductEntityProvider::ENTITY_SUBTYPE_CONFIGURABLE_VARIANTS:
-                $parentProduct = $this->getParentProduct(
-                    product: $entity,
-                    storeId: $storeId,
-                );
-
-                $return = $parentProduct
-                    ? $this->isIndexable($parentProduct, $storeId)
-                    : true;
-                break;
-
-            default:
-                $return = $this->isIndexable($entity, $storeId);
-                break;
-        }
-
-        return $return;
+        return $this->isIndexable($entity, $store);
     }
 
     /**
      * @param ProductInterface $product
-     * @param int $storeId
+     * @param StoreInterface $store
      *
      * @return bool
      */
     private function isIndexable(
         ProductInterface $product,
-        int $storeId,
+        StoreInterface $store,
     ): bool {
-        if (!method_exists($product, 'getDataUsingMethod')) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Invalid argument provided for "$entity". '
-                    . 'Expected %s implementing "getData", "getDataUsingMethod", received %s.',
-                    ProductInterface::class,
-                    $product::class,
-                ),
-            );
-        }
-
-        return in_array(
-            needle: (int)$product->getDataUsingMethod(ProductInterface::VISIBILITY),
-            haystack: $this->getAllowedSyncVisibilities($storeId),
+        $visibility = (int)$product->getVisibility();
+        $isVisibilityAllowed = in_array(
+            needle: $visibility,
+            haystack: $this->getAllowedSyncVisibilities((int)$store->getId()),
             strict: true,
         );
+
+        if (!$isVisibilityAllowed) {
+            $currentScope = $this->scopeProvider->getCurrentScope();
+            $this->scopeProvider->setCurrentScope(scope: $store);
+            $this->logger->debug(
+            // phpcs:ignore Generic.Files.LineLength.TooLong
+                message: 'Store ID: {storeId} Product ID: {productId} not indexable due to Visibility: {visibility} in {method}',
+                context: [
+                    'storeId' => $store->getId(),
+                    'productId' => $product->getId(),
+                    'visibility' => $visibility,
+                    'method' => __METHOD__,
+                ],
+            );
+            if ($currentScope->getScopeObject()) {
+                $this->scopeProvider->setCurrentScope(scope: $currentScope->getScopeObject());
+            } else {
+                $this->scopeProvider->unsetCurrentScope();
+            }
+        }
+
+        return $isVisibilityAllowed;
     }
 
     /**
@@ -155,63 +147,5 @@ class ProductVisibilityIsIndexableDeterminer implements IsIndexableDeterminerInt
             ],
             $configuredVisibilities,
         );
-    }
-
-    /**
-     * @param ProductInterface $product
-     * @param int $storeId
-     *
-     * @return ProductInterface|null
-     */
-    private function getParentProduct(
-        ProductInterface $product,
-        int $storeId,
-    ): ?ProductInterface {
-        if (
-            !method_exists($product, 'getData')
-            || !method_exists($product, 'getDataUsingMethod')
-        ) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Invalid argument provided for "$entity". '
-                    . 'Expected %s implementing "getData", "getDataUsingMethod", received %s.',
-                    ProductInterface::class,
-                    $product::class,
-                ),
-            );
-        }
-
-        $parentId = $product->getDataUsingMethod('parent_id');
-        if (!$parentId) {
-            $this->logger->warning(
-                message: 'Received configurable variant product without parent id information in {method}',
-                context: [
-                    'method' => __METHOD__,
-                    'productData' => $product->getData(),
-                ],
-            );
-
-            return null;
-        }
-
-        try {
-            $parentProduct = $this->productRepository->getById(
-                productId: (int)$parentId,
-                editMode: false,
-                storeId: $storeId,
-            );
-        } catch (NoSuchEntityException $exception) {
-            $this->logger->error(
-                message: 'Received configurable variant product with invalid parent id in {method}',
-                context: [
-                    'method' => __METHOD__,
-                    'productData' => $product->getData(),
-                ],
-            );
-
-            return null;
-        }
-
-        return $parentProduct;
     }
 }
