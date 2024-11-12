@@ -12,7 +12,7 @@ use Klevu\Indexing\Model\IndexingEntity;
 use Klevu\Indexing\Test\Integration\Traits\IndexingEntitiesTrait;
 use Klevu\IndexingApi\Model\Source\Actions;
 use Klevu\IndexingApi\Service\EntityDiscoveryOrchestratorServiceInterface;
-use Klevu\IndexingProductsExcludeByVisibility\Service\Determiner\ProductVisibilityIsIndexableDeterminer;
+use Klevu\IndexingProductsExcludeByVisibility\Service\Determiner\ProductVisibilityIsIndexableCondition;
 use Klevu\IndexingProductsExcludeByVisibility\Service\EntityDiscoveryOrchestratorService;
 use Klevu\TestFixtures\Catalog\Attribute\AttributeFixturePool;
 use Klevu\TestFixtures\Catalog\AttributeTrait;
@@ -122,7 +122,7 @@ class EntityDiscoveryOrchestratorServiceTest extends TestCase
         $store = $storeFixture->get();
 
         ConfigFixture::setGlobal(
-            path: ProductVisibilityIsIndexableDeterminer::XML_PATH_SYNC_VISIBILITIES,
+            path: ProductVisibilityIsIndexableCondition::XML_PATH_SYNC_VISIBILITIES,
             value: $configVisibilities,
         );
 
@@ -203,7 +203,7 @@ class EntityDiscoveryOrchestratorServiceTest extends TestCase
         $store = $storeFixture->get();
 
         ConfigFixture::setGlobal(
-            path: ProductVisibilityIsIndexableDeterminer::XML_PATH_SYNC_VISIBILITIES,
+            path: ProductVisibilityIsIndexableCondition::XML_PATH_SYNC_VISIBILITIES,
             value: $configVisibilities,
         );
 
@@ -284,7 +284,7 @@ class EntityDiscoveryOrchestratorServiceTest extends TestCase
         $store = $storeFixture->get();
 
         ConfigFixture::setGlobal(
-            path: ProductVisibilityIsIndexableDeterminer::XML_PATH_SYNC_VISIBILITIES,
+            path: ProductVisibilityIsIndexableCondition::XML_PATH_SYNC_VISIBILITIES,
             value: $configVisibilities,
         );
 
@@ -303,6 +303,7 @@ class EntityDiscoveryOrchestratorServiceTest extends TestCase
             IndexingEntity::API_KEY => $apiKey,
             IndexingEntity::TARGET_ID => $productFixture->getId(),
             IndexingEntity::TARGET_ENTITY_TYPE => 'KLEVU_PRODUCT',
+            IndexingEntity::TARGET_ENTITY_SUBTYPE => 'simple',
             IndexingEntity::LAST_ACTION => Actions::UPDATE,
             IndexingEntity::LAST_ACTION_TIMESTAMP => date('Y-m-d H:i:s'),
             IndexingEntity::IS_INDEXABLE => true,
@@ -341,7 +342,7 @@ class EntityDiscoveryOrchestratorServiceTest extends TestCase
         $this->createStore();
 
         ConfigFixture::setGlobal(
-            path: ProductVisibilityIsIndexableDeterminer::XML_PATH_SYNC_VISIBILITIES,
+            path: ProductVisibilityIsIndexableCondition::XML_PATH_SYNC_VISIBILITIES,
             value: Visibility::VISIBILITY_IN_SEARCH . ',' . Visibility::VISIBILITY_BOTH,
         );
 
@@ -503,7 +504,6 @@ class EntityDiscoveryOrchestratorServiceTest extends TestCase
             actual: $indexingEntityVariant3->getNextAction(),
         );
 
-
         $this->cleanIndexingEntities($apiKey);
     }
 
@@ -519,7 +519,7 @@ class EntityDiscoveryOrchestratorServiceTest extends TestCase
         $this->createStore();
 
         ConfigFixture::setGlobal(
-            path: ProductVisibilityIsIndexableDeterminer::XML_PATH_SYNC_VISIBILITIES,
+            path: ProductVisibilityIsIndexableCondition::XML_PATH_SYNC_VISIBILITIES,
             value: Visibility::VISIBILITY_IN_CATALOG . ',' . Visibility::VISIBILITY_IN_SEARCH
                 . ',' . Visibility::VISIBILITY_BOTH,
         );
@@ -587,6 +587,7 @@ class EntityDiscoveryOrchestratorServiceTest extends TestCase
             IndexingEntity::API_KEY => $apiKey,
             IndexingEntity::TARGET_ID => $productFixture->getId(),
             IndexingEntity::TARGET_ENTITY_TYPE => 'KLEVU_PRODUCT',
+            IndexingEntity::TARGET_ENTITY_SUBTYPE => 'configurable',
             IndexingEntity::LAST_ACTION => Actions::ADD,
             IndexingEntity::LAST_ACTION_TIMESTAMP => date('Y-m-d H:i:s'),
             IndexingEntity::IS_INDEXABLE => true,
@@ -596,6 +597,7 @@ class EntityDiscoveryOrchestratorServiceTest extends TestCase
             IndexingEntity::API_KEY => $apiKey,
             IndexingEntity::TARGET_ID => $variantProductFixture1->getId(),
             IndexingEntity::TARGET_ENTITY_TYPE => 'KLEVU_PRODUCT',
+            IndexingEntity::TARGET_ENTITY_SUBTYPE => 'simple',
             IndexingEntity::LAST_ACTION => Actions::NO_ACTION,
             IndexingEntity::LAST_ACTION_TIMESTAMP => null,
             IndexingEntity::IS_INDEXABLE => false,
@@ -605,6 +607,7 @@ class EntityDiscoveryOrchestratorServiceTest extends TestCase
             IndexingEntity::TARGET_ID => $variantProductFixture1->getId(),
             IndexingEntity::TARGET_PARENT_ID => $productFixture->getId(),
             IndexingEntity::TARGET_ENTITY_TYPE => 'KLEVU_PRODUCT',
+            IndexingEntity::TARGET_ENTITY_SUBTYPE => 'configurable_variants',
             IndexingEntity::LAST_ACTION => Actions::ADD,
             IndexingEntity::LAST_ACTION_TIMESTAMP => date('Y-m-d H:i:s'),
             IndexingEntity::IS_INDEXABLE => true,
@@ -614,6 +617,7 @@ class EntityDiscoveryOrchestratorServiceTest extends TestCase
             IndexingEntity::API_KEY => $apiKey,
             IndexingEntity::TARGET_ID => $variantProductFixture2->getId(),
             IndexingEntity::TARGET_ENTITY_TYPE => 'KLEVU_PRODUCT',
+            IndexingEntity::TARGET_ENTITY_SUBTYPE => 'simple',
             IndexingEntity::LAST_ACTION => Actions::ADD,
             IndexingEntity::LAST_ACTION_TIMESTAMP => date('Y-m-d H:i:s'),
             IndexingEntity::IS_INDEXABLE => true,
@@ -623,6 +627,7 @@ class EntityDiscoveryOrchestratorServiceTest extends TestCase
             IndexingEntity::TARGET_ID => $variantProductFixture2->getId(),
             IndexingEntity::TARGET_PARENT_ID => $productFixture->getId(),
             IndexingEntity::TARGET_ENTITY_TYPE => 'KLEVU_PRODUCT',
+            IndexingEntity::TARGET_ENTITY_SUBTYPE => 'configurable_variants',
             IndexingEntity::LAST_ACTION => Actions::ADD,
             IndexingEntity::LAST_ACTION_TIMESTAMP => date('Y-m-d H:i:s'),
             IndexingEntity::IS_INDEXABLE => true,
@@ -632,6 +637,7 @@ class EntityDiscoveryOrchestratorServiceTest extends TestCase
             IndexingEntity::API_KEY => $apiKey,
             IndexingEntity::TARGET_ID => $variantProductFixture3->getId(),
             IndexingEntity::TARGET_ENTITY_TYPE => 'KLEVU_PRODUCT',
+            IndexingEntity::TARGET_ENTITY_SUBTYPE => 'simple',
             IndexingEntity::LAST_ACTION => Actions::ADD,
             IndexingEntity::LAST_ACTION_TIMESTAMP => date('Y-m-d H:i:s'),
             IndexingEntity::IS_INDEXABLE => true,
@@ -641,13 +647,14 @@ class EntityDiscoveryOrchestratorServiceTest extends TestCase
             IndexingEntity::TARGET_ID => $variantProductFixture3->getId(),
             IndexingEntity::TARGET_PARENT_ID => $productFixture->getId(),
             IndexingEntity::TARGET_ENTITY_TYPE => 'KLEVU_PRODUCT',
+            IndexingEntity::TARGET_ENTITY_SUBTYPE => 'configurable_variants',
             IndexingEntity::LAST_ACTION => Actions::ADD,
             IndexingEntity::LAST_ACTION_TIMESTAMP => date('Y-m-d H:i:s'),
             IndexingEntity::IS_INDEXABLE => true,
         ]);
 
         ConfigFixture::setGlobal(
-            path: ProductVisibilityIsIndexableDeterminer::XML_PATH_SYNC_VISIBILITIES,
+            path: ProductVisibilityIsIndexableCondition::XML_PATH_SYNC_VISIBILITIES,
             value: Visibility::VISIBILITY_BOTH,
         );
 
@@ -750,7 +757,6 @@ class EntityDiscoveryOrchestratorServiceTest extends TestCase
             actual: $indexingEntityVariant3->getNextAction(),
         );
 
-
         $this->cleanIndexingEntities($apiKey);
     }
 
@@ -782,6 +788,6 @@ class EntityDiscoveryOrchestratorServiceTest extends TestCase
             Grouped::TYPE_CODE,
         ];
 
-        return $productTypes[random_int(min: 0, max: count($productTypes) -1)];
+        return $productTypes[random_int(min: 0, max: count($productTypes) - 1)];
     }
 }

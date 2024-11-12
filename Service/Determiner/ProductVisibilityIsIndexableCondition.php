@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace Klevu\IndexingProductsExcludeByVisibility\Service\Determiner;
 
 use Klevu\Configuration\Service\Provider\ScopeProviderInterface;
-use Klevu\IndexingApi\Service\Determiner\IsIndexableDeterminerInterface;
+use Klevu\IndexingApi\Service\Determiner\IsIndexableConditionInterface;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Product\Visibility;
 use Magento\Cms\Api\Data\PageInterface;
@@ -19,7 +19,7 @@ use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\ScopeInterface;
 use Psr\Log\LoggerInterface;
 
-class ProductVisibilityIsIndexableDeterminer implements IsIndexableDeterminerInterface
+class ProductVisibilityIsIndexableCondition implements IsIndexableConditionInterface
 {
     public const XML_PATH_SYNC_VISIBILITIES = 'klevu/indexing_products_exclude_by_visibility/sync_visibilities';
 
