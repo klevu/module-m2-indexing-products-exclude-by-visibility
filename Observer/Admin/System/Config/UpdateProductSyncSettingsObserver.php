@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace Klevu\IndexingProductsExcludeByVisibility\Observer\Admin\System\Config;
 
 use Klevu\IndexingApi\Service\Action\CreateCronScheduleActionInterface;
-use Klevu\IndexingProductsExcludeByVisibility\Service\Determiner\ProductVisibilityIsIndexableDeterminer;
+use Klevu\IndexingProductsExcludeByVisibility\Service\Determiner\ProductVisibilityIsIndexableCondition;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 
@@ -38,7 +38,7 @@ class UpdateProductSyncSettingsObserver implements ObserverInterface
         $changedPaths = (array)$observer->getData('changed_paths');
         if (
             !in_array(
-                needle: ProductVisibilityIsIndexableDeterminer::XML_PATH_SYNC_VISIBILITIES,
+                needle: ProductVisibilityIsIndexableCondition::XML_PATH_SYNC_VISIBILITIES,
                 haystack: $changedPaths,
                 strict: true,
             )

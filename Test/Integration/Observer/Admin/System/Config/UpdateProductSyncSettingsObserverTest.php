@@ -10,7 +10,7 @@ namespace Klevu\IndexingProductsExcludeByVisibility\Test\Integration\Observer\Ad
 
 use Klevu\IndexingApi\Service\Action\CreateCronScheduleActionInterface;
 use Klevu\IndexingProductsExcludeByVisibility\Observer\Admin\System\Config\UpdateProductSyncSettingsObserver;
-use Klevu\IndexingProductsExcludeByVisibility\Service\Determiner\ProductVisibilityIsIndexableDeterminer;
+use Klevu\IndexingProductsExcludeByVisibility\Service\Determiner\ProductVisibilityIsIndexableCondition;
 use Klevu\TestFixtures\Store\StoreFixturesPool;
 use Klevu\TestFixtures\Store\StoreTrait;
 use Klevu\TestFixtures\Traits\ObjectInstantiationTrait;
@@ -35,6 +35,7 @@ class UpdateProductSyncSettingsObserverTest extends TestCase
     use StoreTrait;
     use TestImplementsInterfaceTrait;
 
+    // phpcs:ignore Generic.Files.LineLength.TooLong
     private const OBSERVER_NAME = 'Klevu_IndexingProductsExcludeByVisibility_adminSystemConfig_updateProductVisibilitySyncSettings';
     private const EVENT_NAME = 'admin_system_config_changed_section_klevu_developer';
 
@@ -143,7 +144,7 @@ class UpdateProductSyncSettingsObserverTest extends TestCase
             'data' => [
                 'changed_paths' => [
                     'some/other/path',
-                    ProductVisibilityIsIndexableDeterminer::XML_PATH_SYNC_VISIBILITIES,
+                    ProductVisibilityIsIndexableCondition::XML_PATH_SYNC_VISIBILITIES,
                 ],
             ],
         ]);

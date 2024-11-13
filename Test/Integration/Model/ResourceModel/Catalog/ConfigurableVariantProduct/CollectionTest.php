@@ -6,9 +6,11 @@
 
 declare(strict_types=1);
 
+// phpcs:disable Generic.Files.LineLength.TooLong
+
 namespace Klevu\IndexingProductsExcludeByVisibility\Test\Integration\Model\ResourceModel\Catalog\ConfigurableVariantProduct;
 
-use Klevu\IndexingProducts\Model\ResourceModel\Catalog\ConfigurableVariantProduct\Collection as ConfigurableVariantProductCollection; // phpcs:ignore Generic.Files.LineLength.TooLong
+use Klevu\IndexingProducts\Model\ResourceModel\Catalog\ConfigurableVariantProduct\Collection as ConfigurableVariantProductCollection;
 use Klevu\TestFixtures\Catalog\Attribute\AttributeFixturePool;
 use Klevu\TestFixtures\Catalog\AttributeTrait;
 use Klevu\TestFixtures\Catalog\ProductTrait;
@@ -19,11 +21,13 @@ use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\Catalog\Model\Product\Visibility;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Framework\App\ResourceConnection\SourceProviderInterface;
+use Magento\Framework\DataObject;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
 use TddWizard\Fixtures\Catalog\ProductFixturePool;
 
+// phpcs:enable Generic.Files.LineLength.TooLong
 /**
  * @covers Collection::class
  * @method SourceProviderInterface instantiateTestObject(?array $arguments = null)
@@ -176,8 +180,9 @@ class CollectionTest extends TestCase
         $items = $result->getItems();
         $product1Items = array_filter(
             array: $items,
-            callback: static fn (ProductInterface $product): bool => (string)$product->getId() === (
-                $productSimple1->getId() . '-' . $productConfigurable->getId()
+            callback: static fn (DataObject&ProductInterface $product): bool => (
+                    (int)$product->getId() === $productSimple1->getId()
+                    && (int)$product->getData('parent_id') === $productConfigurable->getId()
             ),
         );
         /** @var ProductInterface $product1Item */
@@ -189,8 +194,9 @@ class CollectionTest extends TestCase
 
         $product2Items = array_filter(
             array: $items,
-            callback: static fn (ProductInterface $product): bool => (string)$product->getId() === (
-                $productSimple2->getId() . '-' . $productConfigurable->getId()
+            callback: static fn (DataObject&ProductInterface $product): bool => (
+                (int)$product->getId() === $productSimple2->getId()
+                && (int)$product->getData('parent_id') === $productConfigurable->getId()
             ),
         );
         /** @var ProductInterface $product2Item */
@@ -202,8 +208,9 @@ class CollectionTest extends TestCase
 
         $product3Items = array_filter(
             array: $items,
-            callback: static fn (ProductInterface $product): bool => (string)$product->getId() === (
-                $productSimple3->getId() . '-' . $productConfigurable->getId()
+            callback: static fn (DataObject&ProductInterface $product): bool => (
+                    (int)$product->getId() === $productSimple3->getId()
+                    && (int)$product->getData('parent_id') === $productConfigurable->getId()
             ),
         );
         /** @var ProductInterface $product3Item */

@@ -8,16 +8,14 @@ declare(strict_types=1);
 
 namespace Klevu\IndexingProductsExcludeByVisibility\Test\Integration\Service\Determiner;
 
-use Klevu\IndexingApi\Service\Determiner\IsIndexableDeterminerInterface;
-use Klevu\IndexingProducts\Service\Provider\ProductEntityProvider;
-use Klevu\IndexingProductsExcludeByVisibility\Service\Determiner\ProductVisibilityIsIndexableDeterminer;
+use Klevu\IndexingApi\Service\Determiner\IsIndexableConditionInterface;
+use Klevu\IndexingProductsExcludeByVisibility\Service\Determiner\ProductVisibilityIsIndexableCondition;
 use Klevu\TestFixtures\Catalog\ProductTrait;
 use Klevu\TestFixtures\Store\StoreFixturesPool;
 use Klevu\TestFixtures\Store\StoreTrait;
 use Klevu\TestFixtures\Traits\ObjectInstantiationTrait;
 use Klevu\TestFixtures\Traits\TestImplementsInterfaceTrait;
 use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Catalog\Model\Product;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -27,9 +25,9 @@ use TddWizard\Fixtures\Catalog\ProductFixturePool;
 use TddWizard\Fixtures\Core\ConfigFixture;
 
 /**
- * @covers \Klevu\IndexingProductsExcludeByVisibility\Service\Determiner\ProductVisibilityIsIndexableDeterminer::class
- * @method ProductVisibilityIsIndexableDeterminer instantiateTestObject(?array $arguments = null)
- * @method ProductVisibilityIsIndexableDeterminer instantiateTestObjectFromInterface(?array $arguments = null)
+ * @covers \Klevu\IndexingProductsExcludeByVisibility\Service\Determiner\ProductVisibilityIsIndexableCondition::class
+ * @method IsIndexableConditionInterface instantiateTestObject(?array $arguments = null)
+ * @method IsIndexableConditionInterface instantiateTestObjectFromInterface(?array $arguments = null)
  */
 class ProductVisibilityIsIndexableDeterminerTest extends TestCase
 {
@@ -50,8 +48,8 @@ class ProductVisibilityIsIndexableDeterminerTest extends TestCase
     {
         parent::setUp();
 
-        $this->implementationFqcn = ProductVisibilityIsIndexableDeterminer::class;
-        $this->interfaceFqcn = IsIndexableDeterminerInterface::class;
+        $this->implementationFqcn = ProductVisibilityIsIndexableCondition::class;
+        $this->interfaceFqcn = IsIndexableConditionInterface::class;
         $this->objectManager = Bootstrap::getObjectManager();
         $this->storeFixturesPool = $this->objectManager->get(StoreFixturesPool::class);
         $this->productFixturePool = $this->objectManager->get(ProductFixturePool::class);
@@ -117,7 +115,7 @@ class ProductVisibilityIsIndexableDeterminerTest extends TestCase
         $product = $productFixture->getProduct();
 
         ConfigFixture::setGlobal(
-            path: ProductVisibilityIsIndexableDeterminer::XML_PATH_SYNC_VISIBILITIES,
+            path: ProductVisibilityIsIndexableCondition::XML_PATH_SYNC_VISIBILITIES,
             value: $configVisibilities,
         );
 
@@ -176,7 +174,7 @@ class ProductVisibilityIsIndexableDeterminerTest extends TestCase
         $productFixture = $this->productFixturePool->get('test_product');
 
         ConfigFixture::setGlobal(
-            path: ProductVisibilityIsIndexableDeterminer::XML_PATH_SYNC_VISIBILITIES,
+            path: ProductVisibilityIsIndexableCondition::XML_PATH_SYNC_VISIBILITIES,
             value: $configVisibilities,
         );
 
@@ -195,11 +193,12 @@ class ProductVisibilityIsIndexableDeterminerTest extends TestCase
                 // phpcs:ignore Generic.Files.LineLength.TooLong
             'Store ID: {storeId} Product ID: {productId} not indexable due to Visibility: {visibility} in {method}',
                 [
-                    'storeId' => $storeFixture->getId(),
-                    'productId' => $productFixture->getId(),
+                    'storeId' => (string)$storeFixture->getId(),
+                    'productId' => (string)$productFixture->getId(),
                     'visibility' => $productVisibility,
-                    'method' => 'Klevu\IndexingProductsExcludeByVisibility\Service\Determiner\ProductVisibilityIsIndexableDeterminer::isIndexable',
-                ]
+                    // phpcs:ignore Generic.Files.LineLength.TooLong
+                    'method' => 'Klevu\IndexingProductsExcludeByVisibility\Service\Determiner\ProductVisibilityIsIndexableCondition::isIndexable',
+                ],
             );
 
         $determiner = $this->instantiateTestObject([
