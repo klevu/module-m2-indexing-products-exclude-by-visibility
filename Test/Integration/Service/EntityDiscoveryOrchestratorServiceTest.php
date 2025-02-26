@@ -138,7 +138,15 @@ class EntityDiscoveryOrchestratorServiceTest extends TestCase
         $this->cleanIndexingEntities($apiKey);
 
         $service = $this->instantiateDiscoveryOrchestrator();
-        $result = $service->execute(entityTypes: ['KLEVU_PRODUCT'], apiKeys: [$apiKey]);
+        $resultGenerators = $service->execute(entityTypes: ['KLEVU_PRODUCT'], apiKeys: [$apiKey]);
+        $resultsArray = [];
+        foreach ($resultGenerators as $resultGenerator) {
+            $resultsArray[] = iterator_to_array($resultGenerator);
+        }
+        $results = array_filter(
+            array_merge(...$resultsArray),
+        );
+        $result = array_shift($results);
 
         $this->assertTrue($result->isSuccess());
 
@@ -219,7 +227,15 @@ class EntityDiscoveryOrchestratorServiceTest extends TestCase
         $this->cleanIndexingEntities($apiKey);
 
         $service = $this->instantiateDiscoveryOrchestrator();
-        $result = $service->execute(entityTypes: ['KLEVU_PRODUCT'], apiKeys: [$apiKey]);
+        $resultGenerators = $service->execute(entityTypes: ['KLEVU_PRODUCT'], apiKeys: [$apiKey]);
+        $resultsArray = [];
+        foreach ($resultGenerators as $resultGenerator) {
+            $resultsArray[] = iterator_to_array($resultGenerator);
+        }
+        $results = array_filter(
+            array_merge(...$resultsArray),
+        );
+        $result = array_shift($results);
 
         $this->assertTrue($result->isSuccess());
 
@@ -310,7 +326,15 @@ class EntityDiscoveryOrchestratorServiceTest extends TestCase
         ]);
 
         $service = $this->instantiateDiscoveryOrchestrator();
-        $result = $service->execute(entityTypes: ['KLEVU_PRODUCT'], apiKeys: [$apiKey]);
+        $resultGenerators = $service->execute(entityTypes: ['KLEVU_PRODUCT'], apiKeys: [$apiKey]);
+        $resultsArray = [];
+        foreach ($resultGenerators as $resultGenerator) {
+            $resultsArray[] = iterator_to_array($resultGenerator);
+        }
+        $results = array_filter(
+            array_merge(...$resultsArray),
+        );
+        $result = array_shift($results);
 
         $this->assertTrue($result->isSuccess());
 
@@ -406,7 +430,15 @@ class EntityDiscoveryOrchestratorServiceTest extends TestCase
         $this->cleanIndexingEntities($apiKey);
 
         $service = $this->instantiateDiscoveryOrchestrator();
-        $result = $service->execute(entityTypes: ['KLEVU_PRODUCT'], apiKeys: [$apiKey]);
+        $resultGenerators = $service->execute(entityTypes: ['KLEVU_PRODUCT'], apiKeys: [$apiKey]);
+        $resultsArray = [];
+        foreach ($resultGenerators as $resultGenerator) {
+            $resultsArray[] = iterator_to_array($resultGenerator);
+        }
+        $results = array_filter(
+            array_merge(...$resultsArray),
+        );
+        $result = array_shift($results);
 
         $this->assertTrue($result->isSuccess());
 
@@ -659,7 +691,15 @@ class EntityDiscoveryOrchestratorServiceTest extends TestCase
         );
 
         $service = $this->instantiateDiscoveryOrchestrator();
-        $result = $service->execute(entityTypes: ['KLEVU_PRODUCT'], apiKeys: [$apiKey]);
+        $resultGenerators = $service->execute(entityTypes: ['KLEVU_PRODUCT'], apiKeys: [$apiKey]);
+        $resultsArray = [];
+        foreach ($resultGenerators as $resultGenerator) {
+            $resultsArray[] = iterator_to_array($resultGenerator);
+        }
+        $results = array_filter(
+            array_merge(...$resultsArray),
+        );
+        $result = array_shift($results);
 
         $this->assertTrue($result->isSuccess());
 
